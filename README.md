@@ -1,7 +1,7 @@
 # AA228-Final-Project
 
 ### Literature 
-Tomita et al. Small-body reconaissance:
+Tomita et al. Small-body reconaissance [Anshuk]:
 https://ssdl.gatech.edu/sites/default/files/ssdl-files/papers/conferencePapers/AAS-22-841.pdf
 
 Hermann et al. RL: [Emily]
@@ -10,7 +10,7 @@ https://ieeexplore.ieee.org/document/10058020
 Hermann et al. MCTS: [Emily]
 https://arc.aiaa.org/doi/10.2514/1.I010992
 
-Hermann et al. On-board:
+Hermann et al. On-board [Anshuk]:
 https://ieeexplore.ieee.org/document/9843331
 
 Harris et al. Operation procedure via RL 
