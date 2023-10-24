@@ -16,8 +16,11 @@ https://ieeexplore.ieee.org/document/9843331
 Harris et al. Operation procedure via RL 
 https://arc.aiaa.org/doi/10.2514/1.A35169
 
-Takubo et al. Hierarchical RL:
-https://arc.aiaa.org/doi/10.2514/1.A35122
+Mark agile satellite: 
+https://hanspeterschaub.info/Papers/Stephenson2023.pdf
 
 Duncan Eddy Ph.D. thesis [Yuji]:
 https://www.proquest.com/docview/2563685279?pq-origsite=gscholar&fromopenview=true
+
+Takubo et al. Hierarchical RL:
+https://arc.aiaa.org/doi/10.2514/1.A35122
