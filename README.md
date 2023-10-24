@@ -16,5 +16,8 @@ https://ieeexplore.ieee.org/document/9843331
 Harris et al. Operation procedure via RL 
 https://arc.aiaa.org/doi/10.2514/1.A35169
 
-Takubo et al. Hierarchical RL 
+Takubo et al. Hierarchical RL:
 https://arc.aiaa.org/doi/10.2514/1.A35122
+
+Duncan Ph.D. thesis:
+https://www.proquest.com/docview/2563685279?pq-origsite=gscholar&fromopenview=true
