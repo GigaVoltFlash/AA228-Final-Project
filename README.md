@@ -19,5 +19,5 @@ https://arc.aiaa.org/doi/10.2514/1.A35169
 Takubo et al. Hierarchical RL:
 https://arc.aiaa.org/doi/10.2514/1.A35122
 
-Duncan Eddy Ph.D. thesis:
+Duncan Eddy Ph.D. thesis [Yuji]:
 https://www.proquest.com/docview/2563685279?pq-origsite=gscholar&fromopenview=true
