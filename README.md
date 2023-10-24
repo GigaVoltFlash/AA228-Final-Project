@@ -7,7 +7,7 @@ https://ssdl.gatech.edu/sites/default/files/ssdl-files/papers/conferencePapers/A
 Hermann et al. RL:
 https://ieeexplore.ieee.org/document/10058020
 
-Hermann et al. MCTS:
+Hermann et al. MCTS: [Emily]
 https://arc.aiaa.org/doi/10.2514/1.I010992
 
 Hermann et al. On-board:
