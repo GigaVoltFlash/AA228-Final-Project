@@ -4,7 +4,7 @@
 Tomita et al. Small-body reconaissance:
 https://ssdl.gatech.edu/sites/default/files/ssdl-files/papers/conferencePapers/AAS-22-841.pdf
 
-Hermann et al. RL:
+Hermann et al. RL: [Emily]
 https://ieeexplore.ieee.org/document/10058020
 
 Hermann et al. MCTS: [Emily]
