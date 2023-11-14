@@ -1,5 +1,10 @@
 # AA228-Final-Project
 
+### Notes
+For additional MDP and POMDP tools: see POMDPs.jl
+https://github.com/JuliaPOMDP/POMDPs.jl/tree/master
+https://juliapomdp.github.io/POMDPs.jl/stable/ 
+
 ### Literature 
 Tomita et al. Small-body reconaissance [Anshuk]:
 https://ssdl.gatech.edu/sites/default/files/ssdl-files/papers/conferencePapers/AAS-22-841.pdf
