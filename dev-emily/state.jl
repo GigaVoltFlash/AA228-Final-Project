@@ -10,11 +10,13 @@ mutable struct State
     alt             # in km(?)
     attitude        # Tuple of angles - for now: (x_angle, y_angle)
     target_list     # n entries in list; each entry is a tuple of (x, y, r)
+    observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
 function create_target_list(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
     all_data = CSV.read(csv_path, DataFrame)
+    # all_data.observed .= 0  
     target_list = Tuple.(eachrow(all_data))
     return target_list, length(target_list)
 end
@@ -29,7 +31,7 @@ Action space:
 n+1 -> Image target n 
 """
 
-function transition(state, a)
+function TR(state, a)
 
     max_x_ang = 30 
     max_y_ang = 60
@@ -38,7 +40,7 @@ function transition(state, a)
         # No changes to rewards, etc
         println("Action 1: do nothing")
 
-        # TODO figure out if we want to do anything here
+        R = 0
 
     else
         target = state.target_list[a-1]
@@ -51,19 +53,23 @@ function transition(state, a)
         if (abs(x_angle) > max_x_ang) || (abs(y_angle) > max_y_ang) 
             # exceeded maximum angle
 
-            # TODO: figure out what happens here
-            # for now: do nothing
-
             println("Out of slew range. Doing nothing.")
+            R = 0
+
+        elseif state.observed_list[a-1] == 1
+            # already observed
+            # we may never reach this state, but including for now just in case
+
+            println("Already observed this target. Doing nothing.")
+            R = 0
 
         else
             # this action is allowed
 
-            # TODO collect reward
-            
-            # TODO Somewhere, we need to remove the action from the list (or otherwise mark that it was completed) if it's actually taken
-
-            state.attitude = (x_angle, y_angle)
+            state.attitude = (x_angle, y_angle)    # new attitude after imaging target
+            R = target[3]    # getting the reward
+            # state.target_list[a-1][3] = 0   # set the reward in the image tuple to 0 so we don't image it again
+            state.observed_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             println("Slewing to target and imaging.")
 
@@ -79,4 +85,7 @@ function transition(state, a)
 
     # for final version: this is where we propagate dynamics TODO
 
+    # TODO: update the list of available targets and actions based on visible horizon
+
+    return state, R
 end
