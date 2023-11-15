@@ -20,7 +20,7 @@ Action space:
 .
 n+1 -> Image target n 
 """
-A = 1:n_targets 
+A = 1:n_targets + 1
 
 for t = 0:60
     global state
