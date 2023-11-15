@@ -33,6 +33,8 @@ n+1 -> Image target n
 
 function TR(state, a)
 
+    newstate = state 
+
     max_x_ang = 30 
     max_y_ang = 60
 
@@ -43,11 +45,11 @@ function TR(state, a)
         R = 0
 
     else
-        target = state.target_list[a-1]
+        target = newstate.target_list[a-1]
         # calculate the required slew angle
-        x_angle = atand((target[1] - state.x) / state.alt) # not worried about using atan2 since these are smallish angles
+        x_angle = atand((target[1] - newstate.x) / newstate.alt) # not worried about using atan2 since these are smallish angles
         # println(a[1])
-        y_angle = atand((target[2] - state.y) / state.alt)
+        y_angle = atand((target[2] - newstate.y) / newstate.alt)
         # println(a[2])
 
         if (abs(x_angle) > max_x_ang) || (abs(y_angle) > max_y_ang) 
@@ -56,7 +58,7 @@ function TR(state, a)
             println("Out of slew range. Doing nothing.")
             R = 0
 
-        elseif state.observed_list[a-1] == 1
+        elseif newstate.observed_list[a-1] == 1
             # already observed
             # we may never reach this state, but including for now just in case
 
@@ -66,10 +68,10 @@ function TR(state, a)
         else
             # this action is allowed
 
-            state.attitude = (x_angle, y_angle)    # new attitude after imaging target
+            newstate.attitude = (x_angle, y_angle)    # new attitude after imaging target
             R = target[3]    # getting the reward
             # state.target_list[a-1][3] = 0   # set the reward in the image tuple to 0 so we don't image it again
-            state.observed_list[a-1] = 1 # set this to 1 to flag that it's been observed
+            newstate.observed_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             println("Slewing to target and imaging.")
 
@@ -79,7 +81,7 @@ function TR(state, a)
 
     # no matter the action, we continue down the orbit track
     # for temporary test case: 
-    state.y += dydt
+    newstate.y += dydt
 
     println("Next time step")
 
@@ -87,5 +89,5 @@ function TR(state, a)
 
     # TODO: update the list of available targets and actions based on visible horizon
 
-    return state, R
+    return newstate, R
 end

@@ -23,6 +23,7 @@ n+1 -> Image target n
 A = 1:n_targets 
 
 for t = 0:60
-    newstate, reward = TR(state, rand(A))
+    global state
+    state, reward = TR(state, rand(A))
 
 end
