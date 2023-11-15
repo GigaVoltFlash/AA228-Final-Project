@@ -13,6 +13,8 @@ mutable struct State
     observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
+State.copy(state::State) = State(state.x, state.y, state.dydt, state.alt, state.attitude, state.target_list, state.observed_list)
+
 function create_target_list(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
     all_data = CSV.read(csv_path, DataFrame)
@@ -36,7 +38,9 @@ function TR(state, a)
     newstate = state 
 
     max_x_ang = 30 
-    max_y_ang = 60
+    max_y_ang = 30
+
+    y_noise_mag = .01 
 
     if a == 1
         # No changes to rewards, etc
@@ -81,7 +85,7 @@ function TR(state, a)
 
     # no matter the action, we continue down the orbit track
     # for temporary test case: 
-    newstate.y += dydt
+    newstate.y += dydt + y_noise_mag
 
     println("Next time step")
 
