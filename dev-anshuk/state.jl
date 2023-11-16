@@ -1,5 +1,6 @@
 using DataFrames
 using CSV
+using Distributions
 
 mutable struct State
     # lat             # in degrees
@@ -37,11 +38,14 @@ function TR(state, a)
 
     newstate = state 
 
-    max_x_ang = 30
-    max_y_ang = 60
+    max_x_ang = 30 
+    max_y_ang = 30
 
     y_noise_mag = .01 
-    x_noise_mag = .01 
+    x_noise_mag = .01
+
+    x_dist = Normal(0, x_noise_mag)
+    y_dist = Normal(0, y_noise_mag)
 
     if a == 1
         # No changes to rewards, etc
@@ -86,8 +90,10 @@ function TR(state, a)
 
     # no matter the action, we continue down the orbit track
     # for temporary test case: 
-    newstate.y += dydt + y_noise_mag
-    newstate.x += x_noise_mag
+    newstate.y += dydt + rand(y_dist)
+    newstate.x += rand(x_dist)
+
+    # println("Next time step")
 
     # for final version: this is where we propagate dynamics TODO
 
