@@ -14,7 +14,7 @@ mutable struct State
     observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
-Base.copy(state::State) = State(state.x, state.y, state.dydt, state.alt, state.attitude, state.target_list, state.observed_list)
+Base.copy(state::State) = State(deepcopy(state.x), deepcopy(state.y), deepcopy(state.dydt), deepcopy(state.alt), deepcopy(state.attitude), deepcopy(state.target_list), deepcopy(state.observed_list))
 
 function create_target_list(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
@@ -36,7 +36,7 @@ n+1 -> Image target n
 
 function TR(state, a)
 
-    newstate = state 
+    newstate = copy(state) 
 
     max_x_ang = 30 
     max_y_ang = 30
