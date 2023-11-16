@@ -60,14 +60,14 @@ function TR(state, a)
         if (abs(x_angle) > max_x_ang) || (abs(y_angle) > max_y_ang) 
             # exceeded maximum angle
 
-            println("Out of slew range. Doing nothing.")
+            # println("Out of slew range. Doing nothing.")
             R = 0
 
         elseif newstate.observed_list[a-1] == 1
             # already observed
             # we may never reach this state, but including for now just in case
 
-            println("Already observed this target. Doing nothing.")
+            # println("Already observed this target. Doing nothing.")
             R = 0
 
         else
@@ -78,7 +78,7 @@ function TR(state, a)
             # state.target_list[a-1][3] = 0   # set the reward in the image tuple to 0 so we don't image it again
             newstate.observed_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
-            println("Slewing to target and imaging.")
+            # println("Slewing to target and imaging.")
 
         end
 
