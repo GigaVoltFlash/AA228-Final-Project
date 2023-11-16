@@ -1,5 +1,6 @@
 using DataFrames
 using CSV
+using Distributions
 
 mutable struct State
     # lat             # in degrees
@@ -13,7 +14,7 @@ mutable struct State
     observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
-State.copy(state::State) = State(state.x, state.y, state.dydt, state.alt, state.attitude, state.target_list, state.observed_list)
+Base.copy(state::State) = State(state.x, state.y, state.dydt, state.alt, state.attitude, state.target_list, state.observed_list)
 
 function create_target_list(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
@@ -41,6 +42,10 @@ function TR(state, a)
     max_y_ang = 30
 
     y_noise_mag = .01 
+    x_noise_mag = .01
+
+    x_dist = Normal(0, x_noise_mag)
+    y_dist = Normal(0, y_noise_mag)
 
     if a == 1
         # No changes to rewards, etc
@@ -85,7 +90,8 @@ function TR(state, a)
 
     # no matter the action, we continue down the orbit track
     # for temporary test case: 
-    newstate.y += dydt + y_noise_mag
+    newstate.y += dydt + rand(y_dist)
+    newstate.x += rand(x_dist)
 
     println("Next time step")
 

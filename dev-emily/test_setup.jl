@@ -24,6 +24,11 @@ A = 1:n_targets + 1
 
 for t = 0:60
     global state
-    state, reward = TR(state, rand(A))
+    a = rand(A)
+    print("Choosing action ")
+    print(a)
+    print("\n")
+    state, reward = TR(state, a)
+    # println(state)
 
 end
