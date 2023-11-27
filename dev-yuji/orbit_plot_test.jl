@@ -15,7 +15,7 @@ koe0 = [
 ]
 
 dt = 20 
-time = 0:20:86400
+time = 0:20:86400 / 4
 state = zeros(6, length(time))
 
 for (i, t) in enumerate(time)
