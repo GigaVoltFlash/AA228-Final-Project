@@ -1,4 +1,5 @@
 using Dates
+using LinearAlgebra
 
 # constants 
 Ωdot = 2*pi / (23*3600 + 56*60 + 4.09053) 
@@ -94,22 +95,19 @@ function solve_kepler(M, e)
 end
 
 
-function ECI_to_ECEF(rv, tjd)
-    dt_JD  = tjd - datetime2julian(tjd0); 
+function ECI_to_ECEF(rv, dt_JD)
     Ω = Ωdot * dt_JD;
-    r = dot(Rz(Ω), rv[1:3]) 
-    v = dot(Rz(Ω), rv[4:6]) - cross([0,0,Ωdot], rv[1:3])
+    r = Rz(Ω) *  rv[1:3] 
+    v = Rz(Ω) * rv[4:6] - cross([0,0,Ωdot], rv[1:3])
     return vcat(r, v)
 end 
 
-function ECEF_to_ECI(rv, tjd)
-    dt_JD  = tjd - datetime2julian(tjd0); 
+function ECEF_to_ECI(rv, dt_JD)
     Ω = Ωdot * dt_JD;
-    r = dot(Rz(-Ω), rv[1:3]) 
-    v = dot(Rz(-Ω), rv[4:6]) + cross([0,0,Ωdot], rv[1:3])
+    r = Rz(-Ω) * rv[1:3] 
+    v = Rz(-Ω) * rv[4:6] + cross([0,0,Ωdot], rv[1:3])
     return vcat(r, v)
 end
-
 
 # rotation matrix: passive rotation for coordinate transformation 
 function Rx(x)
