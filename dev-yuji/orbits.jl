@@ -6,10 +6,10 @@ tjd0 = DateTime(2000,1,1,12,0,0)  # J2000 epoch
         
 
 # koe = [a,e,i,Ω,ω,M]
-function kepler_dyn(koe::Vector, dt, param)
+function kepler_dyn(koe::Vector, dt, mu_E)
 
     a = koe[1]
-    n = sqrt(param.mu/a^3)
+    n = sqrt(mu_E/a^3)
     koe[6] = koe[6] + n*dt
 
     return koe
@@ -76,7 +76,7 @@ function koe2cart(koe, mu)
     r = Rz(-Ω) * Rx(-i) * Rz(-ω) * rvec
     v = Rz(-Ω) * Rx(-i) * Rz(-ω) * vvec 
 
-    return cat(r, v)...  # concatenate r and v
+    return vcat(r, v)  # concatenate r and v
 end
 
 
@@ -99,7 +99,7 @@ function ECI_to_ECEF(rv, tjd)
     Ω = Ωdot * dt_JD;
     r = dot(Rz(Ω), rv[1:3]) 
     v = dot(Rz(Ω), rv[4:6]) - cross([0,0,Ωdot], rv[1:3])
-    return cat(r, v)...
+    return vcat(r, v)
 end 
 
 function ECEF_to_ECI(rv, tjd)
@@ -107,7 +107,7 @@ function ECEF_to_ECI(rv, tjd)
     Ω = Ωdot * dt_JD;
     r = dot(Rz(-Ω), rv[1:3]) 
     v = dot(Rz(-Ω), rv[4:6]) + cross([0,0,Ωdot], rv[1:3])
-    return cat(r, v)...
+    return vcat(r, v)
 end
 
 
