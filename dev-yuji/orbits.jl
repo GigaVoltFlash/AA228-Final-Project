@@ -94,16 +94,20 @@ function solve_kepler(M, e)
 end
 
 
-function ECI_to_ECEF(cart, tjd)
+function ECI_to_ECEF(rv, tjd)
     dt_JD  = tjd - datetime2julian(tjd0); 
     Ω = Ωdot * dt_JD;
-    return dot(Rz(Ω),cart)
+    r = dot(Rz(Ω), rv[1:3]) 
+    v = dot(Rz(Ω), rv[4:6]) - cross([0,0,Ωdot], rv[1:3])
+    return cat(r, v)...
 end 
 
-function ECEF_to_ECI(cart, tjd)
+function ECEF_to_ECI(rv, tjd)
     dt_JD  = tjd - datetime2julian(tjd0); 
     Ω = Ωdot * dt_JD;
-    return dot(Rz(-Ω),cart)
+    r = dot(Rz(-Ω), rv[1:3]) 
+    v = dot(Rz(-Ω), rv[4:6]) + cross([0,0,Ωdot], rv[1:3])
+    return cat(r, v)...
 end
 
 
