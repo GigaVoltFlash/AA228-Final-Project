@@ -1,9 +1,16 @@
+using Dates
+using LinearAlgebra
+
+# constants 
+Ωdot = 2*pi / (23*3600 + 56*60 + 4.09053) 
+tjd0 = DateTime(2000,1,1,12,0,0)  # J2000 epoch
+        
 
 # koe = [a,e,i,Ω,ω,M]
-function kepler_dyn(koe::Vector, dt, param)
+function kepler_dyn(koe::Vector, dt, mu_E)
 
     a = koe[1]
-    n = sqrt(param.mu/a^3)
+    n = sqrt(mu_E/a^3)
     koe[6] = koe[6] + n*dt
 
     return koe
@@ -17,7 +24,6 @@ function cart_dyn(cart::Vector, dt, param)
 
     return cart
 end
-
 
 function cart2koe(cart, mu)
     r = norm(cart[1:3])
@@ -68,10 +74,10 @@ function koe2cart(koe, mu)
     vvec = sqrt(mu/p)*[-sin(f), e+cos(f), 0]
 
     # rotation matrices
-    r = Rz(ω) * Rx(i) * Rz(Ω) * rvec
-    v = Rz(ω) * Rx(i) * Rz(Ω) * vvec 
+    r = Rz(-Ω) * Rx(-i) * Rz(-ω) * rvec
+    v = Rz(-Ω) * Rx(-i) * Rz(-ω) * vvec 
 
-    return cat(r, v)...  # concatenate r and v
+    return vcat(r, v)  # concatenate r and v
 end
 
 
@@ -89,13 +95,32 @@ function solve_kepler(M, e)
 end
 
 
+function ECI_to_ECEF(rv, dt_JD)
+    Ω = Ωdot * dt_JD;
+    r = Rz(Ω) *  rv[1:3] 
+    v = Rz(Ω) * rv[4:6] - cross([0,0,Ωdot], rv[1:3])
+    return vcat(r, v)
+end 
+
+function ECEF_to_ECI(rv, dt_JD)
+    Ω = Ωdot * dt_JD;
+    r = Rz(-Ω) * rv[1:3] 
+    v = Rz(-Ω) * rv[4:6] + cross([0,0,Ωdot], rv[1:3])
+    return vcat(r, v)
+end
+
 # rotation matrix: passive rotation for coordinate transformation 
+function Rx(x)
+    return [1 0 0; 0 cos(x) sin(x); 0 -sin(x) cos(x)]
+end
+
+function Ry(x)
+    return [cos(x) 0 -sin(x); 0 1 0; sin(x) 0 cos(x)]
+end
+
 function Rz(x)
     return [cos(x) sin(x) 0; -sin(x) cos(x) 0; 0 0 1]
 end 
 
-function Rx(x)
-    return [1 0 0; 0 cos(x) sin(x); 0 -sin(x) cos(x)]
-end
 
 
