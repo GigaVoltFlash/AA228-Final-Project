@@ -3,6 +3,8 @@ using CSV
 using Distributions
 using LinearAlgebra
 
+include("orbits.jl")
+
 mutable struct State
     # lat             # in degrees
     # lon             # in degrees
@@ -116,17 +118,20 @@ function TR(s, a)
     return s_new, R
 end
 
-function get_slew_angle(koe, target_tup)
+function get_slew_angle(koe, target_tup, dt_JD)
     mu = 3.986004418e5
 
     # target tuple is ECEF -- need to convert to ECI
-    target_pos = ECEF_to_ECI([target[1], target[2], target[3], 0, 0, 0], s.dt_JD)
+    target_pos = ECEF_to_ECI([target_tup[1], target_tup[2], target_tup[3], 0, 0, 0], dt_JD)
 
     observer_pos = koe2cart(koe, mu)
 
     R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
 
-    look_vec_rtn = R_eci2rtn * (target_pos .- observer_pos) 
+    # println(target_pos)
+    # println(observer_pos)
+
+    look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
 
     # get the T and N angles by flattening the look vector into their planes
     T_ang = (pi / 2) - acosd(look_vec_rtn[2] / norm( look_vec_rtn[1:2] ))
@@ -137,11 +142,11 @@ function get_slew_angle(koe, target_tup)
 
 end
 
-function ECI_to_RTN_matrix(vec)
+function ECI_to_RTN_matrix(rv)
     # Get the RV frame (aka RTN or LVLH)
-    r_u = (rv[1:34] / norm(rv[1:3])) # unit vector pointing to nadir
+    r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
     t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
-    n_u = cross(v_u, r_u) # unit vector in cross-track direction, pointing to the left
+    n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
 
     # using method adapted from Duncan Eddy's SatelliteDynamics.jl -- need to cite in report
     # https://github.com/sisl/SatelliteDynamics.jl/blob/46f6c9265b1e648dd3891ad593b122a5d0bfa908/src/reference_systems.jl
@@ -169,9 +174,9 @@ function TR_orbit(s, a, time_step=1)
     obs_list = deepcopy(s.observed_list)
 
     rv = koe2cart(s.koe, mu)
-    r_u = (rv[1:34] / norm(rv[1:3])) # unit vector pointing to nadir
+    r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
     t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
-    n_u = cross(v_u, r_u) # unit vector in cross-track direction, pointing to the left
+    n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
 
 
     if a == 1
@@ -186,10 +191,10 @@ function TR_orbit(s, a, time_step=1)
         # calculate the required slew angle
         # convert target pos to ECI
                 
-        angs = get_slew_angle(s.koe, target)
+        angs = get_slew_angle(s.koe, target, s.dt)
 
         # calculate the visible horizon angle
-        horizon_angle = acosd(norm(rv[1:3])/Re)
+        horizon_angle = acosd(Re/norm(rv[1:3]))
 
         if (abs(angs[1]) > max_t_ang) || (abs(angs[2]) > max_n_ang) || (abs(angs[1]) > horizon_angle) || (abs(angs[2]) > horizon_angle) 
             # exceeded maximum angle
@@ -230,7 +235,7 @@ function TR_orbit(s, a, time_step=1)
 
 
 
-    s_new = State(new_koe, attitude, dt, s.target_list,obs_list) 
+    s_new = State3d(new_koe, attitude, dt, s.target_list,obs_list) 
 
     return s_new, R
 end
