@@ -21,7 +21,7 @@ Base.copy(state::State) = State(deepcopy(state.x), deepcopy(state.y), deepcopy(s
 
 mutable struct State3d
     koe             # [a,e,i,Ω,ω,M] w/ angles in radians, distance in km 
-    attitude        # Tuple of angles - for now: (cross_track_angle (+ to left), along_track_angle (+ in vel direction)).
+    attitude        # vector of angles - for now: [cross_track_angle (+ to left), along_track_angle (+ in vel direction)].
     dt              # time elapsed since beginning of scenario
     target_list     # n entries in list; each entry is a tuple of (x, y, z, r) w/ posiitons in ECEF
     observed_list   # n entries in list; 1 indicates if a target was observed
@@ -165,17 +165,18 @@ end
 
 function TR_orbit(s, a, time_step=1)
 
-    max_t_ang = 15  # in/along track
-    max_n_ang = 15 # out of track
-    mu = 3.986004418e5 #km^3/m^2 
-    Re = 6371 # earth radius, km
+    max_t_ang = 15  # max slew angle - in/along track
+    max_c_ang = 15 # max slew angle - out of track
+    mu = 3.986004418e5 #km^3/m^2   
+    Re = 6371 # earth radius, km   # TODO confirm this matches what's in other funcs
+    fov = 5 # degrees from boresight
 
+    c_error_mag = 1 # defining error in pointing angle after slew, degrees
+    t_error_mag = 1
 
-    # x_noise_mag = .01
-    # y_noise_mag = .01
+    c_dist = Normal(0, c_error_mag)
+    t_dist = Normal(0, t_error_mag)
 
-    # x_dist = Normal(0, x_noise_mag)
-    # y_dist = Normal(0, y_noise_mag)
 
     obs_list = deepcopy(s.observed_list)
 
@@ -201,34 +202,72 @@ function TR_orbit(s, a, time_step=1)
         print("Required slew angle: ")
         println(angs)
 
-        # calculate the visible horizon angle
+        # calculate the visible horizon angle and distance
         horizon_angle = acosd(Re/norm(rv[1:3]))
+        horizon_dist = sqrt( norm(rv[1:3])^2 - Re^2 )
 
-        if (abs(angs[1]) > max_t_ang) || (abs(angs[2]) > max_n_ang) || (abs(angs[1]) > horizon_angle) || (abs(angs[2]) > horizon_angle) 
+        # Check for constraint violations
+        out_of_range_c = abs(angs[1] - s.attitude[1]) > max_t_ang
+        out_of_range_t = abs(angs[2] - s.attitude[2]) > max_c_ang
+        beyond_horizon_c = abs(angs[1]) > horizon_angle
+        beyond_horizon_t = abs(angs[2]) > horizon_angle
+        far_side = norm(rv[1:3]) > horizon_dist
+
+        if out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
             # exceeded maximum angle
 
-            println("Out of slew range. Doing nothing.")
-            R = 0
-            attitude = s.attitude
+            # we can slew only as far as the maximum slew angle / horizon_angle
+            attitude = [0.0, 0.0] # just initializing as something
+            attitude[1] = minimum([ angs[1], max_c_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+            attitude[2] = minimum([ angs[2], max_t_ang, horizon_angle ]) + rand(t_dist) # choose whatever is lowest
 
-        elseif s.observed_list[a-1] == 1
+            println("Out of slew range. Slewed to limit of slew range (with error).")
+
+            if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
+                 (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
+                # target is in the field of view
+                println("Imaged target anyway!")
+                R = target[4]
+                obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
+
+            else
+                # target outside field of view
+                println("Did not successfully image target.")
+                R = 0
+
+            end
+
+        elseif obs_list[a-1] == 1
             # already observed
-            # we may never reach this state, but including for now just in case
 
             println("Already observed this target. Doing nothing.")
             R = 0
             attitude = s.attitude
 
         else
-            # this action is allowed
+            # this action is within constraints --> allowed
 
-            # TODO: stochastic transition, check if target in new FOV
 
-            attitude = angs    # new attitude after imaging target
-            R = target[4]    # getting the reward
-            obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
+            attitude = [0.0, 0.0] # just to initialize it
+            attitude[1] = angs[1] + rand(c_dist) 
+            attitude[2] = angs[2] + rand(t_dist) 
 
-            println("Slewing to target and imaging.")
+            println("Slewing to target.")
+
+            if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
+                 (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
+                # target is in the field of view
+                println("Target in FOV - imaged!")
+                R = target[4]
+                obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
+
+            else
+                # target outside field of view
+                println("Target out of FOV - did not image.")
+                R = 0
+
+            end
+
 
         end
     end
