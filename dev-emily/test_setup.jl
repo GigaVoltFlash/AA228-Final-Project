@@ -6,7 +6,7 @@ if false
     y0 = 0
     dydt = 1
     alt = 50
-    attitude = (0, 0)
+    attitude = [0.0, 0.0]
     target_list, n_targets = create_target_list("src/obs_site.csv")
 
     state = State(x0, y0, dydt, alt, attitude, target_list, zeros(n_targets))
@@ -36,7 +36,7 @@ if false
 else
     # create initial 3d state
     koe = [6571, 0.001, 0, 0, 0, 0]
-    att = (0,0)
+    att = [0,0]
     dt = 0
     target_list = [(6371, 0, 0, 100), (0, 6371, 0, 100)]
     n_targets = 2
@@ -55,10 +55,10 @@ else
     A = 1:n_targets + 1
 
     reward_total = 0
-    for t in 0:(90*60)
+    for t in 0:10
         global state, reward_total
         # a = rand(A)
-        a = 3
+        a = 2
         print("Choosing action ")
         print(a)
         print("\n")
