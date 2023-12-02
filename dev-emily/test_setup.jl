@@ -54,17 +54,23 @@ else
     """
     A = 1:n_targets + 1
 
-    for t in 0:360
-        global state
-        a = rand(A)
+    reward_total = 0
+    for t in 0:(90*60)
+        global state, reward_total
+        # a = rand(A)
+        a = 3
         print("Choosing action ")
         print(a)
         print("\n")
 
         state, reward = TR_orbit(state, a)
 
+        reward_total += reward
 
     end
+
+    print("Total reward: ")
+    println(reward_total)
 
 
 

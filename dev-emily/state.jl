@@ -123,8 +123,12 @@ function get_slew_angle(koe, target_tup, dt_JD)
 
     # target tuple is ECEF -- need to convert to ECI
     target_pos = ECEF_to_ECI([target_tup[1], target_tup[2], target_tup[3], 0, 0, 0], dt_JD)
+    print("Target position in ECI: ")
+    println(target_pos)
 
     observer_pos = koe2cart(koe, mu)
+    print("Observer position in ECI: ")
+    println(observer_pos)
 
     R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
 
@@ -132,11 +136,13 @@ function get_slew_angle(koe, target_tup, dt_JD)
     # println(observer_pos)
 
     look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
+    print("Look vector in RTN: ")
+    println(look_vec_rtn)
 
     # get the T and N angles by flattening the look vector into their planes
-    T_ang = (pi / 2) - acosd(look_vec_rtn[2] / norm( look_vec_rtn[1:2] ))
+    T_ang = 90 - acosd(look_vec_rtn[2] / norm( look_vec_rtn[1:2] ))
 
-    N_ang = (pi / 2) - acosd(look_vec_rtn[3] / norm( [look_vec_rtn[1], look_vec_rtn[3]] ))
+    N_ang = 90 - acosd(look_vec_rtn[3] / norm( [look_vec_rtn[1], look_vec_rtn[3]] ))
 
     return (N_ang, T_ang)
 
@@ -192,6 +198,8 @@ function TR_orbit(s, a, time_step=1)
         # convert target pos to ECI
                 
         angs = get_slew_angle(s.koe, target, s.dt)
+        print("Required slew angle: ")
+        println(angs)
 
         # calculate the visible horizon angle
         horizon_angle = acosd(Re/norm(rv[1:3]))
@@ -236,6 +244,6 @@ function TR_orbit(s, a, time_step=1)
 
 
     s_new = State3d(new_koe, attitude, dt, s.target_list,obs_list) 
-
+ 
     return s_new, R
 end
