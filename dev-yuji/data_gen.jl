@@ -37,6 +37,7 @@ end
 lon,lat,data = GeoDatasets.landseamask(;resolution='c',grid=5)
 
 df = map_on_earth(-110, 98, 10, 60, 100)
+df = CSV.write("obs_site_Earth.csv", df)
 f = Figure(size = (1200, 800))
 ax = Axis(f[1, 1], aspect=DataAspect(), title = "Target sites")
 scatter!(ax, df.λ, df.φ, overdraw = true, color = :red, markersize = 3)
