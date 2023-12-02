@@ -1,6 +1,6 @@
 using GLMakie 
 using Dates
-include("orbits.jl")
+include("../src/orbits.jl")
 
 mu_E = 398600.4418  # [km^3/s^2]
 r_E = 6375.0  # [km]
