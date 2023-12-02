@@ -30,6 +30,7 @@ function map_on_earth(λ0, i, Δλ, Δφ, num_site::Int)
     df.x = R_E .* cosd.(df.φ) .* cosd.(df.λ)
     df.y = R_E .* cosd.(df.φ) .* sind.(df.λ)
     df.z = R_E .* sind.(df.φ)
+    df.r = rand(num_site)
 
     return df 
 end
