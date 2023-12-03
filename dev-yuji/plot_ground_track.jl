@@ -45,7 +45,7 @@ for (i, t) in enumerate(time)
 end
 
 # load df 
-df = CSV.read("src/obs_site_Earth.csv", DataFrame)
+df = CSV.read("src/obs_site_Earth2.csv", DataFrame)
 
 # plotting 
 lon,lat,data = GeoDatasets.landseamask(;resolution='c',grid=5)
