@@ -41,7 +41,7 @@ function create_target_list_3d(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
     all_data = CSV.read(csv_path, DataFrame)
     # all_data.observed .= 0  
-    target_list = Tuple.(eachrow(all_data)[3:end])
+    target_list = Tuple.(eachrow(all_data[:,3:end]))
     return target_list, length(target_list)
 end
 
@@ -170,8 +170,12 @@ function ECI_to_RTN_matrix(rv)
     return R_mat
 end
 
+function TR_orbit(s, a)
+    # if no time step specified, use 1
+    return TR_orbits(s, a, 1)
+end
 
-function TR_orbit(s, a, time_step=1)
+function TR_orbit(s, a, time_step)
 
     max_t_ang = 15  # max slew angle - in/along track
     max_c_ang = 15 # max slew angle - out of track
@@ -187,7 +191,7 @@ function TR_orbit(s, a, time_step=1)
 
 
     obs_list = deepcopy(s.observed_list)
-    println(length(obs_list))
+    # println(length(obs_list))
 
     rv = koe2cart(s.koe, mu)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
@@ -245,7 +249,9 @@ function TR_orbit(s, a, time_step=1)
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
                 println("Imaged target anyway!")
-                R = maximum( rand(target_dist), 0 )
+                # println(target_dist)
+                # println(rand(target_dist))
+                R = maximum( [rand(target_dist), 0 ])
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
@@ -269,7 +275,7 @@ function TR_orbit(s, a, time_step=1)
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
                 println("Target in FOV - imaged!")
-                R = maximum( rand(target_dist), 0 )
+                R = maximum( [rand(target_dist), 0] )
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
