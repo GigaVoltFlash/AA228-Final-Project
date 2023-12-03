@@ -197,7 +197,7 @@ function TR_orbit(s, a, time_step)
     # println(length(obs_list))
 
     rv = koe2cart(s.koe, mu)
-    print("Observer state: ")
+    print("Observer state ECI: ")
     println(rv)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
     t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
@@ -217,11 +217,11 @@ function TR_orbit(s, a, time_step)
         # convert target pos to ECI
                 
         angs = get_slew_angle(s.koe, target, s.dt)
-        print("Target angle: ")
+        print("Target angle from nadir: ")
         println(angs)
 
         # calculate the visible horizon angle and distance
-        horizon_angle = acosd(Re/norm(rv[1:3]))
+        horizon_angle = asind(Re/norm(rv[1:3]))
         horizon_dist = sqrt( norm(rv[1:3])^2 - Re^2 )
         println(horizon_angle)
         println(horizon_dist)
@@ -233,13 +233,14 @@ function TR_orbit(s, a, time_step)
         beyond_horizon_t = abs(angs[2]) > horizon_angle
 
         target_pos = ECEF_to_ECI([target[1], target[2], target[3], 0, 0, 0], s.dt)
-        print("Target state: ")
+        print("Target state ECI: ")
         println(target_pos)
         observer_pos = koe2cart(koe, mu)
         R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
         look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
         far_side = norm(look_vec_rtn) > horizon_dist
-        println(norm(look_vec_rtn))
+        print("Look vector in RTN: ")
+        # println(norm(look_vec_rtn))
         println(look_vec_rtn)
 
         if obs_list[a-1] == 1
