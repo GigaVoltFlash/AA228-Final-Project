@@ -219,6 +219,7 @@ function TR_orbit(s, a, time_step)
         # calculate the visible horizon angle and distance
         horizon_angle = acosd(Re/norm(rv[1:3]))
         horizon_dist = sqrt( norm(rv[1:3])^2 - Re^2 )
+        println(horizon_angle)
 
         # Check for constraint violations
         out_of_range_c = abs(angs[1] - s.attitude[1]) > max_t_ang
@@ -234,8 +235,13 @@ function TR_orbit(s, a, time_step)
             println("Already observed this target. Doing nothing.")
             R = 0
             attitude = s.attitude
+        elseif far_side
+            # we definitely can't see it if it's beyond the horizon
+            println("Target is beyond line fo sight. Doing nothing.")
+            R = 0
+            attitude = s.attitude
 
-        elseif out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
+        elseif out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c 
             # exceeded maximum angle
 
             # we can slew only as far as the maximum slew angle / horizon_angle
