@@ -37,6 +37,14 @@ function create_target_list(csv_path)
     return target_list, length(target_list)
 end
 
+function create_target_list_3d(csv_path)
+    # all_data = CSV.read(csv_path, DataFrame)
+    all_data = CSV.read(csv_path, DataFrame)
+    # all_data.observed .= 0  
+    target_list = Tuple.(eachrow(all_data)[3:end])
+    return target_list, length(target_list)
+end
+
 """ 
 Action space:
 1 -> Do nothing OR: rotate to neutral/some intermediate position
@@ -144,7 +152,7 @@ function get_slew_angle(koe, target_tup, dt_JD)
 
     N_ang = 90 - acosd(look_vec_rtn[3] / norm( [look_vec_rtn[1], look_vec_rtn[3]] ))
 
-    return (N_ang, T_ang)
+    return (N_ang, T_ang) # Cross-track, along-track
 
 end
 
@@ -195,6 +203,7 @@ function TR_orbit(s, a, time_step=1)
 
     else
         target = s.target_list[a-1]
+        target_dist = Normal(target[4], target[5])
         # calculate the required slew angle
         # convert target pos to ECI
                 
@@ -213,7 +222,15 @@ function TR_orbit(s, a, time_step=1)
         beyond_horizon_t = abs(angs[2]) > horizon_angle
         far_side = norm(rv[1:3]) > horizon_dist
 
-        if out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
+
+        if obs_list[a-1] == 1
+            # already observed
+
+            println("Already observed this target. Doing nothing.")
+            R = 0
+            attitude = s.attitude
+
+        elseif out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
             # exceeded maximum angle
 
             # we can slew only as far as the maximum slew angle / horizon_angle
@@ -227,7 +244,7 @@ function TR_orbit(s, a, time_step=1)
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
                 println("Imaged target anyway!")
-                R = target[4]
+                R = maximum( rand(target_dist), 0 )
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
@@ -237,13 +254,6 @@ function TR_orbit(s, a, time_step=1)
 
             end
 
-        elseif obs_list[a-1] == 1
-            # already observed
-
-            println("Already observed this target. Doing nothing.")
-            R = 0
-            attitude = s.attitude
-
         else
             # this action is within constraints --> allowed
 
@@ -251,6 +261,119 @@ function TR_orbit(s, a, time_step=1)
             attitude = [0.0, 0.0] # just to initialize it
             attitude[1] = angs[1] + rand(c_dist) 
             attitude[2] = angs[2] + rand(t_dist) 
+
+            println("Slewing to target.")
+
+            if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
+                 (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
+                # target is in the field of view
+                println("Target in FOV - imaged!")
+                R = maximum( rand(target_dist), 0 )
+                obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
+
+            else
+                # target outside field of view
+                println("Target out of FOV - did not image.")
+                R = 0
+
+            end
+
+
+        end
+    end
+
+    # no matter the action, we continue down the orbit track
+    new_koe = kepler_dyn(copy(s.koe), time_step, mu )
+    dt = s.dt + time_step
+
+    println("Next time step")
+
+    s_new = State3d(new_koe, attitude, dt, s.target_list,obs_list) 
+ 
+    return s_new, R
+end
+
+function TR_orbit_clean(s, a, time_step=1)
+
+    max_t_ang = 15  # max slew angle - in/along track
+    max_c_ang = 15 # max slew angle - out of track
+    mu = 3.986004418e5 #km^3/m^2   
+    Re = 6371 # earth radius, km   # TODO confirm this matches what's in other funcs
+    fov = 5 # degrees from boresight
+
+    obs_list = deepcopy(s.observed_list)
+    println(length(obs_list))
+
+    rv = koe2cart(s.koe, mu)
+    r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
+    t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
+    n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
+
+    if a == 1
+        # No changes to rewards, etc
+        # println("Action 1: do nothing")
+
+        R = 0
+        attitude = s.attitude
+
+    else
+        target = s.target_list[a-1]
+        # target_dist = Normal(target[4], target[5])
+        # calculate the required slew angle
+        # convert target pos to ECI
+                
+        angs = get_slew_angle(s.koe, target, s.dt)
+        print("Required slew angle: ")
+        println(angs)
+
+        # calculate the visible horizon angle and distance
+        horizon_angle = acosd(Re/norm(rv[1:3]))
+        horizon_dist = sqrt( norm(rv[1:3])^2 - Re^2 )
+
+        # Check for constraint violations
+        out_of_range_c = abs(angs[1] - s.attitude[1]) > max_t_ang
+        out_of_range_t = abs(angs[2] - s.attitude[2]) > max_c_ang
+        beyond_horizon_c = abs(angs[1]) > horizon_angle
+        beyond_horizon_t = abs(angs[2]) > horizon_angle
+        far_side = norm(rv[1:3]) > horizon_dist
+
+        if obs_list[a-1] == 1
+            # already observed
+
+            println("Already observed this target. Doing nothing.")
+            R = 0
+            attitude = s.attitude
+
+        elseif out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
+            # exceeded maximum angle
+
+            # we can slew only as far as the maximum slew angle / horizon_angle
+            attitude = [0.0, 0.0] # just initializing as something
+            attitude[1] = minimum([ angs[1], max_c_ang, horizon_angle ]) # choose whatever is lowest
+            attitude[2] = minimum([ angs[2], max_t_ang, horizon_angle ]) # choose whatever is lowest
+
+            println("Out of slew range. Slewed to limit of slew range (with error).")
+
+            if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
+                 (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
+                # target is in the field of view
+                println("Imaged target anyway!")
+                R = maximum( rand(target_dist), 0 )
+                obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
+
+            else
+                # target outside field of view
+                println("Did not successfully image target.")
+                R = 0
+
+            end
+
+        else
+            # this action is within constraints --> allowed
+
+            attitude = [0.0, 0.0] # just to initialize it
+            attitude[1] = angs[1] 
+            attitude[2] = angs[2] 
 
             println("Slewing to target.")
 
@@ -276,11 +399,7 @@ function TR_orbit(s, a, time_step=1)
     new_koe = kepler_dyn(copy(s.koe), time_step, mu )
     dt = s.dt + time_step
 
-    # TODO: add noise to trajectory?
-
     println("Next time step")
-
-
 
     s_new = State3d(new_koe, attitude, dt, s.target_list,obs_list) 
  
