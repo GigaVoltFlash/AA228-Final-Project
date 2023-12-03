@@ -36,8 +36,8 @@ n+1 -> Image target n
 
 function TR(s, a)
 
-    max_x_ang = 15 
-    max_y_ang = 15
+    max_x_ang = 50 
+    max_y_ang = 50
 
     y_noise_mag = .01 
     x_noise_mag = .01
