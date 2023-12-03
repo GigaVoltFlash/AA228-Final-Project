@@ -239,9 +239,22 @@ function TR_orbit(s, a, time_step)
             # exceeded maximum angle
 
             # we can slew only as far as the maximum slew angle / horizon_angle
-            attitude = [0.0, 0.0] # just initializing as something
-            attitude[1] = minimum([ angs[1], max_c_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
-            attitude[2] = minimum([ angs[2], max_t_ang, horizon_angle ]) + rand(t_dist) # choose whatever is lowest
+            attitude = s.attitude # just initializing as something
+            if angs[1] > attitude[1] + max_c_ang
+                # we have exceeded the range in + direction
+                attitude[1] = minimum([ attitude[1] + max_c_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+            else
+                # we have exceeded the range in - direction
+                attitude[1] = maximum([ angs[1] - max_c_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer to 0)
+            end
+
+            if angs[2] > attitude[2] + max_c_ang
+                # we have exceeded the range in + direction
+                attitude[2] = minimum([ attitude[2] + max_t_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+            else
+                # we have exceeded the range in - direction
+                attitude[2] = maximum([ angs[2] - max_t_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer tp 0)
+            end
 
             println("Out of slew range. Slewed to limit of slew range (with error).")
 
@@ -265,7 +278,7 @@ function TR_orbit(s, a, time_step)
             # this action is within constraints --> allowed
 
 
-            attitude = [0.0, 0.0] # just to initialize it
+            attitude = state.attitude # just to initialize it
             attitude[1] = angs[1] + rand(c_dist) 
             attitude[2] = angs[2] + rand(t_dist) 
 
@@ -355,9 +368,24 @@ function TR_orbit_clean(s, a, time_step=1)
             # exceeded maximum angle
 
             # we can slew only as far as the maximum slew angle / horizon_angle
-            attitude = [0.0, 0.0] # just initializing as something
-            attitude[1] = minimum([ angs[1], max_c_ang, horizon_angle ]) # choose whatever is lowest
-            attitude[2] = minimum([ angs[2], max_t_ang, horizon_angle ]) # choose whatever is lowest
+            # we can slew only as far as the maximum slew angle / horizon_angle
+            attitude = s.attitude # just initializing as something
+            if angs[1] > attitude[1] + max_c_ang
+                # we have exceeded the range in + direction
+                attitude[1] = minimum([ attitude[1] + max_c_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+            else
+                # we have exceeded the range in - direction
+                attitude[1] = maximum([ angs[1] - max_c_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer to 0)
+            end
+
+            if angs[2] > attitude[2] + max_c_ang
+                # we have exceeded the range in + direction
+                attitude[2] = minimum([ attitude[2] + max_t_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+            else
+                # we have exceeded the range in - direction
+                attitude[2] = maximum([ angs[2] - max_t_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer tp 0)
+            end
+
 
             println("Out of slew range. Slewed to limit of slew range (with error).")
 
@@ -378,7 +406,7 @@ function TR_orbit_clean(s, a, time_step=1)
         else
             # this action is within constraints --> allowed
 
-            attitude = [0.0, 0.0] # just to initialize it
+            attitude = s.attitude # just to initialize it
             attitude[1] = angs[1] 
             attitude[2] = angs[2] 
 
