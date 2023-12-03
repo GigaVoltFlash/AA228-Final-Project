@@ -7,7 +7,7 @@ if false
     dydt = 1
     alt = 50
     attitude = [0.0, 0.0]
-    target_list, n_targets = create_target_list("src/obs_site.csv")
+    target_list, n_targets = create_target_list_3d("src/obs_site.csv")
 
     state = State(x0, y0, dydt, alt, attitude, target_list, zeros(n_targets))
     # print(state)
