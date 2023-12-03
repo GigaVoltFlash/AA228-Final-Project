@@ -27,7 +27,7 @@ mutable struct State3d
     observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
-Base.copy(state::State3d) = State3d(deepcopy(state.koe), deppcopy(state.attitude), deppcopy(state.dt), deepcopy(state.target_list), deepcopy(state.observed_list))
+Base.copy(state::State3d) = State3d(deepcopy(state.koe), deepcopy(state.attitude), deepcopy(state.dt), deepcopy(state.target_list), deepcopy(state.observed_list))
 
 function create_target_list(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
