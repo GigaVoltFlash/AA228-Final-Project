@@ -39,12 +39,12 @@ else
     
     koe = [
     7057.0,  # a [km]
-    0.000879,  # e 
+    0.000879,  # e
     deg2rad(98.12),  # i
-    deg2rad(260.09),  # Ω [rad]
-    deg2rad(221.37),  # ω [rad]
-    0.0,  # M [rad]
-    ]
+    deg2rad(255.09),  # Ω [rad]
+    deg2rad(225.37),  # ω [rad]
+    deg2rad(75.0),  # M [rad]
+]
     att = [0.0,0.0]
     dt = 0
     target_list, n_targets = create_target_list_3d("src/obs_site_Earth.csv")
@@ -66,10 +66,11 @@ else
 
     time_step = 30 # seconds
     reward_total = 0
-    for t in 0:time_step:30*60
+    # for t in 0:time_step:30*60
+    for t in 0:time_step:2000
         global state, reward_total
         a = rand(A)
-        # a = 92
+        # a = 2
         print("Choosing action ")
         print(a)
         print("\n")

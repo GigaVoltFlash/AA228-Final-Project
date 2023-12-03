@@ -3,7 +3,7 @@ using CSV
 using Distributions
 using LinearAlgebra
 
-include("orbits.jl")
+include("../src/orbits.jl")
 
 mutable struct State
     # lat             # in degrees
@@ -127,6 +127,7 @@ function TR(s, a)
 end
 
 function get_slew_angle(koe, target_tup, dt_JD)
+    # Technically this is just getting the angle to the target in RTN frame, NOT the slew angle from current attitude
     mu = 3.986004418e5
 
     # target tuple is ECEF -- need to convert to ECI
@@ -194,10 +195,11 @@ function TR_orbit(s, a, time_step)
     # println(length(obs_list))
 
     rv = koe2cart(s.koe, mu)
+    print("Observer state: ")
+    println(rv)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
     t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
     n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
-
 
     if a == 1
         # No changes to rewards, etc
@@ -213,30 +215,39 @@ function TR_orbit(s, a, time_step)
         # convert target pos to ECI
                 
         angs = get_slew_angle(s.koe, target, s.dt)
-        print("Required slew angle: ")
+        print("Target angle: ")
         println(angs)
 
         # calculate the visible horizon angle and distance
         horizon_angle = acosd(Re/norm(rv[1:3]))
         horizon_dist = sqrt( norm(rv[1:3])^2 - Re^2 )
         println(horizon_angle)
+        println(horizon_dist)
 
         # Check for constraint violations
-        out_of_range_c = abs(angs[1] - s.attitude[1]) > max_t_ang
-        out_of_range_t = abs(angs[2] - s.attitude[2]) > max_c_ang
+        out_of_range_c = abs(angs[1] - s.attitude[1]) > max_c_ang
+        out_of_range_t = abs(angs[2] - s.attitude[2]) > max_t_ang
         beyond_horizon_c = abs(angs[1]) > horizon_angle
         beyond_horizon_t = abs(angs[2]) > horizon_angle
-        far_side = norm(rv[1:3]) > horizon_dist
 
+        target_pos = ECEF_to_ECI([target[1], target[2], target[3], 0, 0, 0], s.dt)
+        print("Target state: ")
+        println(target_pos)
+        observer_pos = koe2cart(koe, mu)
+        R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
+        look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
+        far_side = norm(look_vec_rtn) > horizon_dist
+        println(norm(look_vec_rtn))
+        println(look_vec_rtn)
 
         if obs_list[a-1] == 1
             # already observed
 
             println("Already observed this target. Doing nothing.")
-            R = 0
+            R = 0 
             attitude = s.attitude
         elseif far_side
-            # we definitely can't see it if it's beyond the horizon
+            # we definitely can't see it if it's on the far side of the earth
             println("Target is beyond line of sight. Doing nothing.")
             R = 0
             attitude = s.attitude
