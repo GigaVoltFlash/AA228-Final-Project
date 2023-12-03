@@ -37,6 +37,14 @@ function create_target_list(csv_path)
     return target_list, length(target_list)
 end
 
+function create_target_list_3d(csv_path)
+    # all_data = CSV.read(csv_path, DataFrame)
+    all_data = CSV.read(csv_path, DataFrame)
+    # all_data.observed .= 0  
+    target_list = Tuple.(eachrow(all_data)[3:end])
+    return target_list, length(target_list)
+end
+
 """ 
 Action space:
 1 -> Do nothing OR: rotate to neutral/some intermediate position
@@ -144,7 +152,7 @@ function get_slew_angle(koe, target_tup, dt_JD)
 
     N_ang = 90 - acosd(look_vec_rtn[3] / norm( [look_vec_rtn[1], look_vec_rtn[3]] ))
 
-    return (N_ang, T_ang)
+    return (N_ang, T_ang) # Cross-track, along-track
 
 end
 
@@ -179,6 +187,7 @@ function TR_orbit(s, a, time_step=1)
 
 
     obs_list = deepcopy(s.observed_list)
+    println(length(obs_list))
 
     rv = koe2cart(s.koe, mu)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
@@ -213,7 +222,15 @@ function TR_orbit(s, a, time_step=1)
         beyond_horizon_t = abs(angs[2]) > horizon_angle
         far_side = norm(rv[1:3]) > horizon_dist
 
-        if out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
+
+        if obs_list[a-1] == 1
+            # already observed
+
+            println("Already observed this target. Doing nothing.")
+            R = 0
+            attitude = s.attitude
+
+        elseif out_of_range_t || out_of_range_c || beyond_horizon_t || beyond_horizon_c || far_side
             # exceeded maximum angle
 
             # we can slew only as far as the maximum slew angle / horizon_angle
@@ -236,13 +253,6 @@ function TR_orbit(s, a, time_step=1)
                 R = 0
 
             end
-
-        elseif obs_list[a-1] == 1
-            # already observed
-
-            println("Already observed this target. Doing nothing.")
-            R = 0
-            attitude = s.attitude
 
         else
             # this action is within constraints --> allowed
@@ -276,11 +286,7 @@ function TR_orbit(s, a, time_step=1)
     new_koe = kepler_dyn(copy(s.koe), time_step, mu )
     dt = s.dt + time_step
 
-    # TODO: add noise to trajectory?
-
     println("Next time step")
-
-
 
     s_new = State3d(new_koe, attitude, dt, s.target_list,obs_list) 
  
