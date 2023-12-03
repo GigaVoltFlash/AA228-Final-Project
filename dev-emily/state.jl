@@ -160,8 +160,10 @@ end
 function ECI_to_RTN_matrix(rv)
     # Get the RV frame (aka RTN or LVLH)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
-    t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
-    n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
+    v_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
+    n_u = cross( r_u, v_u) # unit vector in cross-track direction, pointing to the left
+
+    t_u = cross(n_u, r_u)
 
     # using method adapted from Duncan Eddy's SatelliteDynamics.jl -- need to cite in report
     # https://github.com/sisl/SatelliteDynamics.jl/blob/46f6c9265b1e648dd3891ad593b122a5d0bfa908/src/reference_systems.jl

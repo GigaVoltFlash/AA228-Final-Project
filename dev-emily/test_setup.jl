@@ -44,7 +44,8 @@ else
     deg2rad(255.09),  # Ω [rad]
     deg2rad(225.37),  # ω [rad]
     deg2rad(75.0),  # M [rad]
-]
+    ]
+
     att = [0.0,0.0]
     dt = 0
     target_list, n_targets = create_target_list_3d("src/obs_site_Earth.csv")
@@ -68,9 +69,10 @@ else
     reward_total = 0
     # for t in 0:time_step:30*60
     for t in 0:time_step:2000
+    # for t in 0
         global state, reward_total
         a = rand(A)
-        # a = 2
+        # a = 3
         print("Choosing action ")
         print(a)
         print("\n")
