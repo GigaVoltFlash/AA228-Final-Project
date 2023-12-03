@@ -204,6 +204,7 @@ function TR_orbit(s, a, time_step=1)
 
     else
         target = s.target_list[a-1]
+        target_dist = Normal(target[4], target[5])
         # calculate the required slew angle
         # convert target pos to ECI
                 
@@ -244,7 +245,7 @@ function TR_orbit(s, a, time_step=1)
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
                 println("Imaged target anyway!")
-                R = target[4]
+                R = maximum( rand(target_dist), 0 )
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
@@ -268,7 +269,7 @@ function TR_orbit(s, a, time_step=1)
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
                 println("Target in FOV - imaged!")
-                R = target[4]
+                R = maximum( rand(target_dist), 0 )
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
