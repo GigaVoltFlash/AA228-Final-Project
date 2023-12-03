@@ -56,4 +56,4 @@ contour!(ax, lon, lat, data, levels=[0.5], color=:black, linewidth=0.5)
 lines!(ax, lat_long[1,:], lat_long[2,:], overdraw = true, color = :blue, linewidth = 2,)
 ylims!(ax, low = -90, high = 90)
 xlims!(ax, low = -180, high = 180)
-f
+savefig(f, "random_targeting.png")

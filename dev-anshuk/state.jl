@@ -41,7 +41,7 @@ function create_target_list_3d(csv_path)
     # all_data = CSV.read(csv_path, DataFrame)
     all_data = CSV.read(csv_path, DataFrame)
     # all_data.observed .= 0  
-    target_list = Tuple.(eachrow(all_data)[3:end])
+    target_list = Tuple.(eachrow(all_data[:,3:end]))
     return target_list, length(target_list)
 end
 
