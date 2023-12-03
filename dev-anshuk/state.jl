@@ -240,22 +240,21 @@ function TR_orbit(s, a, time_step)
 
             # we can slew only as far as the maximum slew angle / horizon_angle
             attitude = s.attitude # just initializing as something
-            if angs[1] > attitude[1] + max_c_ang
+            if angs[1] > (attitude[1] + max_c_ang)
                 # we have exceeded the range in + direction
                 attitude[1] = minimum([ attitude[1] + max_c_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
             else
                 # we have exceeded the range in - direction
-                attitude[1] = maximum([ angs[1] - max_c_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer to 0)
+                attitude[1] = maximum([ attitude[1] - max_c_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer to 0)
             end
 
-            if angs[2] > attitude[2] + max_c_ang
+            if angs[2] > (attitude[2] + max_c_ang)
                 # we have exceeded the range in + direction
-                attitude[2] = minimum([ attitude[2] + max_t_ang, horizon_angle ]) + rand(c_dist) # choose whatever is lowest
+                attitude[2] = minimum([ attitude[2] + max_t_ang, horizon_angle ]) + rand(t_dist) # choose whatever is lowest
             else
                 # we have exceeded the range in - direction
-                attitude[2] = maximum([ angs[2] - max_t_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer tp 0)
+                attitude[2] = maximum([ attitude[2] - max_t_ang, -horizon_angle ]) + rand(t_dist) # choose whatever is highest (closer tp 0)
             end
-
             println("Out of slew range. Slewed to limit of slew range (with error).")
 
             if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
