@@ -21,14 +21,14 @@ koe0 = [
     7057.0,  # a [km]
     0.000879,  # e 
     deg2rad(98.12),  # i
-    deg2rad(260.09),  # Ω [rad]
-    deg2rad(221.37),  # ω [rad]
-    0.0,  # M [rad]
+    deg2rad(255.09),  # Ω [rad]
+    deg2rad(225.37),  # ω [rad]
+    deg2rad(75.0),  # M [rad]
 ]
 
 # oe propagation
 dt = 20 
-time = 0:20:6000
+time = 0:20:2000
 state = zeros(6, length(time))
 state_ECEF = zeros(6, length(time))
 state_ECI = zeros(6, length(time))

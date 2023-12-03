@@ -1,4 +1,5 @@
 include("../dev-emily/state.jl")
+include("heuristics.jl")
 
 # create initial 3d state
 # koe = [6571, 0.001, 0, 0, 0, 0]
@@ -17,8 +18,6 @@ target_list, n_targets = create_target_list_3d("src/obs_site_Earth.csv")
 observed_list = zeros(n_targets)
 state = State3d(koe, att, dt, target_list, observed_list)
 
-
-
 """ 
 Action space:
 1 -> Do nothing OR: rotate to neutral/some intermediate position
@@ -35,14 +34,13 @@ reward_total = 0
 for t in 0:time_step:30*60
     global state, reward_total
     # a = rand(A)
-    a = heuristic_action(state)
+    a = heuristic_action(state, 15)
     # a = 92
     print("Choosing action ")
     print(a)
     print("\n")
 
     state, reward = TR_orbit(state, a, time_step)
-
     reward_total += reward
 
 end

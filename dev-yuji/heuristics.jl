@@ -7,7 +7,7 @@ function heuristic_action(state, max_slew)
     dt  = state.dt            
     target_list = state.target_list  
     observed_list = state.observed_list    
-    flag = .!observed_list  # flag = 1 if the target has not been observed
+    flag = .!Bool.(observed_list)  # flag = 1 if the target has not been observed
     id_targ = 1:length(observed_list)
 
     for (idx, target_tup) in enumerate(target_list)
@@ -15,7 +15,7 @@ function heuristic_action(state, max_slew)
             continue
         end
 
-        slews = get_slew_angle(koe, target_tup, dt_JD)
+        slews = get_slew_angle(koe, target_tup, dt)
         if abs(atttiude[1] - slews[1]) < max_slew && abs(attitude[2] - slews[2]) < max_slew
             flag[i] = 0
         end
