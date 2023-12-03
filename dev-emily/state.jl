@@ -172,7 +172,7 @@ end
 
 function TR_orbit(s, a)
     # if no time step specified, use 1
-    return TR_orbits(s, a, 1)
+    return TR_orbit(s, a, 1)
 end
 
 function TR_orbit(s, a, time_step)
