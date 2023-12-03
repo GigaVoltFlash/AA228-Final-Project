@@ -45,7 +45,7 @@ else
     deg2rad(221.37),  # ω [rad]
     0.0,  # M [rad]
     ]
-    att = [0,0]
+    att = [0.0,0.0]
     dt = 0
     target_list, n_targets = create_target_list_3d("src/obs_site_Earth.csv")
     observed_list = zeros(n_targets)
