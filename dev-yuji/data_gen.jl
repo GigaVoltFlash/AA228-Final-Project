@@ -23,20 +23,21 @@ function map_on_earth(λ0, i, Δλ, Δφ, num_site::Int)
     """    
     R_E = 6375  # km
 
-    df = DataFrame(λ = round.(λ0 .+ Δλ .* (rand(num_site).*2 .- 1), digits=2), 
-                   φ = round.(Δφ .* (rand(num_site).*2 .- 1), digits=2))
-    df.λ = df.λ - df.φ .* tand(i-90)
+    df = DataFrame(lambda = round.(λ0 .+ Δλ .* (rand(num_site).*2 .- 1), digits=2), 
+                   phi = round.(Δφ .* (rand(num_site).*2 .- 1), digits=2))
+    df.lambda = df.lambda - df.phi .* tand(i-90)
 
-    df.x = R_E .* cosd.(df.φ) .* cosd.(df.λ)
-    df.y = R_E .* cosd.(df.φ) .* sind.(df.λ)
-    df.z = R_E .* sind.(df.φ)
-    df.r = rand(num_site)
+    df.x = R_E .* cosd.(df.phi) .* cosd.(df.lambda)
+    df.y = R_E .* cosd.(df.phi) .* sind.(df.lambda)
+    df.z = R_E .* sind.(df.phi)
+    df.r_mean = rand(num_site)
+    df.r_std  = rand(num_site) * 0.3
 
     return df 
 end
 
 
-df = map_on_earth(-110, 98, 10, 60, 100)
+df = map_on_earth(-110, 100, 10, 60, 100)
 df = CSV.write("obs_site_Earth.csv", df)
 
 
