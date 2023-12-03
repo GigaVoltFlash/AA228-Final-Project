@@ -248,7 +248,7 @@ function TR_orbit(s, a, time_step)
                 attitude[1] = maximum([ attitude[1] - max_c_ang, -horizon_angle ]) + rand(c_dist) # choose whatever is highest (closer to 0)
             end
 
-            if angs[2] > attitude[2] + max_c_ang
+            if angs[2] > attitude[2] + max_t_ang
                 # we have exceeded the range in + direction
                 attitude[2] = minimum([ attitude[2] + max_t_ang, horizon_angle ]) + rand(t_dist) # choose whatever is lowest
             else
