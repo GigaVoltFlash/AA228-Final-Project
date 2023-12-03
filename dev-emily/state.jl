@@ -23,7 +23,7 @@ mutable struct State3d
     koe             # [a,e,i,Ω,ω,M] w/ angles in radians, distance in km 
     attitude        # vector of angles - for now: [cross_track_angle (+ to left), along_track_angle (+ in vel direction)].
     dt              # time elapsed since beginning of scenario
-    target_list     # n entries in list; each entry is a tuple of (x, y, z, r) w/ posiitons in ECEF
+    target_list     # n entries in list; each entry is a tuple of (x, y, z, r_mean, r_cov) w/ positions in ECEF
     observed_list   # n entries in list; 1 indicates if a target was observed
 end
 
@@ -237,7 +237,7 @@ function TR_orbit(s, a, time_step)
             attitude = s.attitude
         elseif far_side
             # we definitely can't see it if it's beyond the horizon
-            println("Target is beyond line fo sight. Doing nothing.")
+            println("Target is beyond line of sight. Doing nothing.")
             R = 0
             attitude = s.attitude
 
