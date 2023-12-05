@@ -196,8 +196,8 @@ end
 
 function TR_orbit(s, a, time_step)
 
-    print("Time elapsed: ")
-    println(s.dt)
+    # print("Time elapsed: ")
+    # println(s.dt)
 
     max_t_ang = 15  # max slew angle - in/along track
     max_c_ang = 15 # max slew angle - out of track
@@ -238,8 +238,8 @@ function TR_orbit(s, a, time_step)
         # convert target pos to ECI
                 
         angs = get_slew_angle(copy(s.koe), target, s.dt)
-        print("Target angle from nadir: ")
-        println(angs)
+        # print("Target angle from nadir: ")
+        # println(angs)
 
         # calculate the visible horizon angle and distance
         horizon_angle = asind(Re/norm(rv[1:3]))
@@ -271,12 +271,12 @@ function TR_orbit(s, a, time_step)
         if obs_list[a-1] == 1
             # already observed
 
-            println("Already observed this target. Doing nothing.")
+            # println("Already observed this target. Doing nothing.")
             R = 0 
             attitude = copy(s.attitude)
         elseif far_side
             # we definitely can't see it if it's on the far side of the earth
-            println("Target is beyond line of sight. Doing nothing.")
+            # println("Target is beyond line of sight. Doing nothing.")
             R = 0
             attitude = copy(s.attitude)
 
@@ -301,12 +301,12 @@ function TR_orbit(s, a, time_step)
                 attitude[2] = maximum([ attitude[2] - max_t_ang, -horizon_angle ]) + rand(t_dist) # choose whatever is highest (closer tp 0)
             end
 
-            println("Out of slew range. Slewed to limit of slew range (with error).")
+            # println("Out of slew range. Slewed to limit of slew range (with error).")
 
             if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
-                println("Imaged target anyway!")
+                # println("Imaged target anyway!")
                 # println(target_dist)
                 # println(rand(target_dist))
                 R = maximum( [rand(target_dist), 0 ])
@@ -314,7 +314,7 @@ function TR_orbit(s, a, time_step)
 
             else
                 # target outside field of view
-                println("Did not successfully image target.")
+                # println("Did not successfully image target.")
                 R = 0
 
             end
@@ -327,18 +327,18 @@ function TR_orbit(s, a, time_step)
             attitude[1] = angs[1] + rand(c_dist) 
             attitude[2] = angs[2] + rand(t_dist) 
 
-            println("Slewing to target.")
+            # println("Slewing to target.")
 
             if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
-                println("Target in FOV - imaged!")
+                # println("Target in FOV - imaged!")
                 R = maximum( [rand(target_dist), 0] )
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
                 # target outside field of view
-                println("Target out of FOV - did not image.")
+                # println("Target out of FOV - did not image.")
                 R = 0
 
             end
@@ -351,7 +351,7 @@ function TR_orbit(s, a, time_step)
     new_koe = kepler_dyn(copy(s.koe), time_step, mu )
     dt = s.dt + time_step
 
-    println("Next time step\n")
+    # println("Next time step\n")
 
     s_new = State3d(new_koe, attitude, dt, s.target_list, obs_list) 
  
@@ -361,8 +361,8 @@ end
 
 function TR_orbit_clean(s, a, time_step)
 
-    print("Time elapsed: ")
-    println(s.dt)
+    # print("Time elapsed: ")
+    # println(s.dt)
 
     max_t_ang = 15  # max slew angle - in/along track
     max_c_ang = 15 # max slew angle - out of track
@@ -395,8 +395,8 @@ function TR_orbit_clean(s, a, time_step)
         # convert target pos to ECI
                 
         angs = get_slew_angle(copy(s.koe), target, s.dt)
-        print("Target angle from nadir: ")
-        println(angs)
+        # print("Target angle from nadir: ")
+        # println(angs)
 
         # calculate the visible horizon angle and distance
         horizon_angle = asind(Re/norm(rv[1:3]))
@@ -428,12 +428,12 @@ function TR_orbit_clean(s, a, time_step)
         if obs_list[a-1] == 1
             # already observed
 
-            println("Already observed this target. Doing nothing.")
+            # println("Already observed this target. Doing nothing.")
             R = 0 
             attitude = copy(s.attitude)
         elseif far_side
             # we definitely can't see it if it's on the far side of the earth
-            println("Target is beyond line of sight. Doing nothing.")
+            # println("Target is beyond line of sight. Doing nothing.")
             R = 0
             attitude = copy(s.attitude)
 
@@ -458,18 +458,18 @@ function TR_orbit_clean(s, a, time_step)
                 attitude[2] = maximum([ attitude[2] - max_t_ang, -horizon_angle ]) # choose whatever is highest (closer tp 0)
             end
 
-            println("Out of slew range. Slewed to limit of slew range (with error).")
+            # println("Out of slew range. Slewed to limit of slew range (with error).")
 
             if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
-                println("Imaged target anyway!")
+                # println("Imaged target anyway!")
                 R = target[4]
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
                 # target outside field of view
-                println("Did not successfully image target.")
+                # println("Did not successfully image target.")
                 R = 0
 
             end
@@ -482,18 +482,18 @@ function TR_orbit_clean(s, a, time_step)
             attitude[1] = angs[1]
             attitude[2] = angs[2]
 
-            println("Slewing to target.")
+            # println("Slewing to target.")
 
             if (angs[1] >= attitude[1] - fov) & (angs[1] <= attitude[1] + fov) &
                  (angs[2] >= attitude[2] - fov) & (angs[2] <= attitude[2] + fov)
                 # target is in the field of view
-                println("Target in FOV - imaged!")
+                # println("Target in FOV - imaged!")
                 R = target[4]
                 obs_list[a-1] = 1 # set this to 1 to flag that it's been observed
 
             else
                 # target outside field of view
-                println("Target out of FOV - did not image.")
+                # println("Target out of FOV - did not image.")
                 R = 0
 
             end
@@ -506,7 +506,7 @@ function TR_orbit_clean(s, a, time_step)
     new_koe = kepler_dyn(copy(s.koe), time_step, mu )
     dt = s.dt + time_step
 
-    println("Next time step\n")
+    # println("Next time step\n")
 
     s_new = State3d(new_koe, attitude, dt, s.target_list, obs_list) 
  
