@@ -189,6 +189,11 @@ function TR_orbit(s, a)
     return TR_orbit(s, a, 1)
 end
 
+function TR_orbit_clean(s, a)
+    # if no time step specified, use 30
+    return TR_orbit_clean(s, a, 30)
+end
+
 function TR_orbit(s, a, time_step)
 
     print("Time elapsed: ")
