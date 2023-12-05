@@ -132,12 +132,12 @@ function get_slew_angle(koe, target_tup, dt_JD)
 
     # target tuple is ECEF -- need to convert to ECI
     target_pos = ECEF_to_ECI([target_tup[1], target_tup[2], target_tup[3], 0, 0, 0], dt_JD)
-    print("Target position in ECI: ")
-    println(target_pos)
+    # print("Target position in ECI: ")
+    # println(target_pos)
 
     observer_pos = koe2cart(koe, mu)
-    print("Observer position in ECI: ")
-    println(observer_pos)
+    # print("Observer position in ECI: ")
+    # println(observer_pos)
 
     R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
 
@@ -145,8 +145,8 @@ function get_slew_angle(koe, target_tup, dt_JD)
     # println(observer_pos)
 
     look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
-    print("Look vector in RTN: ")
-    println(look_vec_rtn)
+    # print("Look vector in RTN: ")
+    # println(look_vec_rtn)
 
     # get the T and N angles by flattening the look vector into their planes
     T_ang = 90 - acosd(look_vec_rtn[2] / norm( look_vec_rtn[1:2] ))
@@ -160,8 +160,10 @@ end
 function ECI_to_RTN_matrix(rv)
     # Get the RV frame (aka RTN or LVLH)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to nadir
-    t_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
-    n_u = cross(t_u, r_u) # unit vector in cross-track direction, pointing to the left
+    v_u = (rv[4:6] / norm(rv[4:6])) # unit vector pointing in velocity direction, i.e. along track
+    n_u = cross( r_u, v_u) # unit vector in cross-track direction, pointing to the left
+
+    t_u = cross(n_u, r_u)
 
     # using method adapted from Duncan Eddy's SatelliteDynamics.jl -- need to cite in report
     # https://github.com/sisl/SatelliteDynamics.jl/blob/46f6c9265b1e648dd3891ad593b122a5d0bfa908/src/reference_systems.jl
@@ -237,8 +239,8 @@ function TR_orbit(s, a, time_step)
         R_eci2rtn = ECI_to_RTN_matrix(observer_pos)
         look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- observer_pos[1:3]) 
         far_side = norm(look_vec_rtn) > horizon_dist
-        # println(norm(look_vec_rtn))
-        # println(look_vec_rtn)
+        println(norm(look_vec_rtn))
+        println(look_vec_rtn)
 
         if obs_list[a-1] == 1
             # already observed
