@@ -69,10 +69,10 @@ else
     reward_total = 0
     # for t in 0:time_step:30*60
     for t in 0:time_step:2000
-    # for t in 0
+    # for t in 0:1
         global state, reward_total
         a = rand(A)
-        # a = 3
+        # a = 52
         print("Choosing action ")
         print(a)
         print("\n")

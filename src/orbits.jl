@@ -22,9 +22,10 @@ function kepler_dyn(koe::Vector, dt, mu_E)
 
     a = koe[1]
     n = sqrt(mu_E/a^3)
-    koe[6] = koe[6] + n*dt
+    koe_ = copy(koe)
+    koe_[6] = koe[6] + n*dt
 
-    return koe
+    return koe_
 end
 
 function cart_dyn(cart::Vector, dt, param)
