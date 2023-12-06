@@ -32,12 +32,13 @@ function map_on_earth(λ0, i, Δλ, Δφ, num_site::Int)
     df.z = R_E .* sind.(df.phi)
     df.r_mean = rand(num_site)
     df.r_std  = rand(num_site) * 0.3
+    df.id = 1:num_site
 
     return df 
 end
 
 
-df = map_on_earth(-110, 100, 10, 60, 50)
-df = CSV.write("obs_site_Earth_50.csv", df)
+df = map_on_earth(-110, 100, 10, 60, 100)
+df = CSV.write("obs_site_Earth_1000.csv", df)
 
 
