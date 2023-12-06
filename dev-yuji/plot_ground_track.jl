@@ -45,8 +45,10 @@ end
 
 df_traj = (
     t = time,
-    x_ECI = state[1,:], y_ECI = state[2,:], z_ECI = state[3,:],
+    x_ECI = state[1,:], y_ECI = state[2,:], z_ECI = state[3,:], 
+    vx_ECI = state[4,:], vy_ECI = state[5,:], vz_ECI = state[6,:],
     x_ECEF = state_ECEF[1,:], y_ECEF = state_ECEF[2,:], z_ECEF = state_ECEF[3,:],
+    vx_ECEF = state_ECEF[4,:], vy_ECEF = state_ECEF[5,:], vz_ECEF = state_ECEF[6,:],
     lambda = lat_long[1,:], phi = lat_long[2,:] 
     )
 
