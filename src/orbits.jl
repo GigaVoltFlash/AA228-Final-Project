@@ -28,6 +28,12 @@ function kepler_dyn(koe::Vector, dt, mu_E)
     return koe_
 end
 
+function kepler_dyn!(koe::Vector, dt, mu_E)
+    a = koe[1]
+    n = sqrt(mu_E/a^3)
+    koe[6] = koe[6] + n*dt
+end
+
 function cart_dyn(cart::Vector, dt, param)
 
     koe = cart2koe(cart, param.mu)
