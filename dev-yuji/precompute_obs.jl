@@ -1,4 +1,6 @@
 using CSV, Random, DataFrames
+include("../dev-emily/state.jl")
+
 
 df_traj = CSV.read("../src/traj_info.csv", DataFrame)
 df_target = CSV.read("../src/obs_site_Earth2.csv", DataFrame)
@@ -28,14 +30,18 @@ max_slew = 15
 for (idx, t) in time
     
     r_ECEF = [x_ECEF[idx], y_ECEF[idx], z_ECEF[idx]]
-    target_dis = norm(target_pos .- r_ECEF)
-    target_list_ = df_target[target_dis .< horizon_dist]
+    target_dis = norm(target_pos .- r_ECEF) .< horizon_dist
 
-    for (idx, target_tup) in enumerate(target_list)
+    for (j, target_tup) in enumerate(target_list)
         
+        # id = target_tup.id
         
+        slews = get_slew_angle2([x_ECI[idx], y_ECI[idx], z_ECI[idx]], target_tup, t) 
+        slew_cond = abs(attitude[1] - slews[1]) < max_slew && abs(attitude[2] - slews[2]) < max_slew
+        dist_cond = target_dis[j]
 
-        slews = get_slew_angle(koe, target_tup, t) 
+
+        
         if (abs(attitude[1] - slews[1]) > max_slew || abs(attitude[2] - slews[2]) > max_slew) && t_min > 0 
             t_max = t_min - dt 
         elseif t_min == 0 && horizon_dist < target_dis

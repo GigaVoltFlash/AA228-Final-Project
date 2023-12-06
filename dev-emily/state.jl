@@ -157,6 +157,37 @@ function get_slew_angle(koe, target_tup, dt_JD)
 
 end
 
+function get_slew_angle2(pos_ECI, target_tup, dt_JD)
+    # Technically this is just getting the angle to the target in RTN frame, NOT the slew angle from current attitude
+    mu = 3.986004418e5
+
+    # target tuple is ECEF -- need to convert to ECI
+    target_pos = ECEF_to_ECI([target_tup[1], target_tup[2], target_tup[3], 0, 0, 0], dt_JD)
+    # print("Target position in ECI: ")
+    # println(target_pos)
+
+    # observer_pos = koe2cart(copy(koe), mu)
+    # print("Observer position in ECI: ")
+    # println(observer_pos)
+
+    R_eci2rtn = ECI_to_RTN_matrix(pos_ECI)
+
+    # println(target_pos)
+    # println(observer_pos)
+
+    look_vec_rtn = R_eci2rtn * (target_pos[1:3] .- pos_ECI) 
+    # print("Look vector in RTN: ")
+    # println(look_vec_rtn)
+
+    # get the T and N angles by flattening the look vector into their planes
+    T_ang = 90 - acosd(look_vec_rtn[2] / norm( look_vec_rtn[1:2] ))
+
+    N_ang = 90 - acosd(look_vec_rtn[3] / norm( [look_vec_rtn[1], look_vec_rtn[3]] ))
+
+    return (N_ang, T_ang) # Cross-track, along-track
+
+end
+
 function ECI_to_RTN_matrix(rv)
     # Get the RV frame (aka RTN or LVLH)
     r_u = (rv[1:3] / norm(rv[1:3])) # unit vector pointing to zenith
