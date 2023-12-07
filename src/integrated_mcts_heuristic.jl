@@ -11,9 +11,9 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "obs_site_Earth_200.csv"
+dataset = "obs_site_Earth_1000.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
-num_runs = 5
+num_runs = 1
 
 target_list, n_targets = create_target_list_3d(dataset)
 
