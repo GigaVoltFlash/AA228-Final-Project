@@ -1,7 +1,7 @@
 using CSV, Random, DataFrames
 using GLMakie
 using GeoDatasets
-include("../src/orbits.jl")
+include("orbits.jl")
 
 """
 Nominal Orbit of the satellite (GeoEye-1 / MAXER)
