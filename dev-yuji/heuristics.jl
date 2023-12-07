@@ -39,14 +39,14 @@ function heuristic_action(state, max_slew)
     feas_target = target_list[flag.==1]
     feas_id_targ = id_targ[flag.==1]
     feas_target_ = [elem for tup in feas_target for elem in tup]
-    feas_target_ = reshape(feas_target_, (length(feas_target), 5))
+    feas_target_ = reshape(feas_target_, (length(feas_target), 6))
     # println("feas_target: ", size(feas_target))
     # println("feas_target: ", feas_target_[:,3])
     if length(feas_target_) == 0
         return 1
     end
     max_val, max_idx = findmax(feas_target_[:,3])
-    println("max_idx;", max_idx)
+    # println("max_idx;", max_idx)
     max_id = feas_id_targ[max_idx]
 
     return max_id + 1 
