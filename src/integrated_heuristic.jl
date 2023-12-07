@@ -10,9 +10,9 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "obs_site_Earth_50.csv"
+dataset = "obs_site_Earth_200.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
-num_runs = 1
+num_runs = 10
 
 # constants
 Re = 6371;

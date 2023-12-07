@@ -9,9 +9,9 @@ include("../src/state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "../src/obs_site_Earth_50.csv"
+dataset = "../src/obs_site_Earth_20.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
-num_runs = 1
+num_runs = 10
 
 target_list, n_targets = create_target_list_3d(dataset)
 

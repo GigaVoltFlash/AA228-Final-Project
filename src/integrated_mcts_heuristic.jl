@@ -5,14 +5,15 @@ using GLMakie
 using GeoDatasets
 using JLD2
 
-include("state.jl")
+
 include("../dev-yuji/heuristics.jl")
+include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "obs_site_Earth_50.csv"
+dataset = "obs_site_Earth_200.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
-num_runs = 1
+num_runs = 5
 
 target_list, n_targets = create_target_list_3d(dataset)
 
@@ -183,7 +184,7 @@ end
 
 println("##################### RESULTS #####################")
 println("Mean reward for MCTS with heuristic rollouts : ", mean(mcts_reward_totals))
-println("Mean no. of observations for MCTS with heuristic rollouts : ", mean(mcts_num_observed))
+println("Median no. of observations for MCTS with heuristic rollouts : ", median(mcts_num_observed))
 println("##################### RESULTS #####################")
 
 println("Gathering data for plotting")
