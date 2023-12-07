@@ -37,7 +37,7 @@ function map_on_earth(λ0, i, Δλ, Δφ, num_site::Int)
     return df 
 end
 
-df = map_on_earth(-110, 100, 10, 60, 500)
-df = CSV.write("obs_site_Earth_500.csv", df)
+df = map_on_earth(-110, 100, 10, 60, 20)
+df = CSV.write("obs_site_Earth_20.csv", df)
 
 
