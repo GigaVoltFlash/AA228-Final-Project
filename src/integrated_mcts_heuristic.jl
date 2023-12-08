@@ -11,7 +11,7 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "./src/obs_site_Earth_1000.csv"
+dataset = "obs_site_Earth_1000.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
 num_runs = 1
 
@@ -25,7 +25,7 @@ slew_limit = 15
 
 # MCTS parameters
 gamma = 0.95 # discount factor for the MDP problem
-m = 500 # simulation count
+m = 5 # simulation count
 c = 4000 # exploration constant
 d = 40 # simulation depth
 d_r = 1 # rollout depth
@@ -135,7 +135,7 @@ state_list_mcts = []
 action_list_mcts = []
 # Create an intial state
 for j in 1:num_runs
-    
+    global state_list_mcts, action_list_mcts, state
     observed_list = zeros(n_targets)
     state = State3d(koe0, att, dt, target_list, observed_list)
 
@@ -149,6 +149,7 @@ for j in 1:num_runs
     state_list_mcts = []
     action_list_mcts = []
     for t = 0:time_step:2000
+        global state_list_mcts, action_list_mcts, state
         # Push to the full list
         state_copy = copy(state)
         push!(state_list_mcts, state_copy)
@@ -226,5 +227,5 @@ cross_ang_des_mcts = [t[1] for t in angs_list_mcts]
 along_ang_des_mcts = [t[2] for t in angs_list_mcts];
 
 println("Saving variables to mcts_heuristic_runs.jld2")
-@save "mcts_heuristic_runs1000.jld2" state_list_mcts action_list_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
+@save "mcts_heuristic_runs1000_2.jld2" state_list_mcts action_list_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
 println("DONE")
