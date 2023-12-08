@@ -11,7 +11,7 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "obs_site_Earth_1000.csv"
+dataset = "./src/obs_site_Earth_1000.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
 num_runs = 1
 
@@ -25,7 +25,7 @@ slew_limit = 15
 
 # MCTS parameters
 gamma = 0.95 # discount factor for the MDP problem
-m = 5 # simulation count
+m = 500 # simulation count
 c = 4000 # exploration constant
 d = 40 # simulation depth
 d_r = 1 # rollout depth
