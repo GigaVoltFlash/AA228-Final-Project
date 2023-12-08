@@ -14,8 +14,8 @@ mu_E = 3.986004418e5; #km^3/m^2
 slew_limit = 15
 
 println("Loading in data")
-@load "heuristic_runs.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
-@load "mcts_random_runs.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
+@load "./src/heuristic_runs.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
+@load "./src/mcts_random_runs1000.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
 
 println("Doing some last minute angle calcs")
 # Get some angles stuff

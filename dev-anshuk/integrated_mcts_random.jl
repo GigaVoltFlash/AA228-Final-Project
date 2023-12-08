@@ -9,7 +9,7 @@ include("../src/state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "../src/obs_site_Earth_50.csv"
+dataset = "../src/obs_site_Earth_1000.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
 num_runs = 1
 
@@ -225,5 +225,5 @@ cross_ang_des_mcts = [t[1] for t in angs_list_mcts]
 along_ang_des_mcts = [t[2] for t in angs_list_mcts];
 
 println("Saving variables to mcts_random_runs.jld2")
-@save "mcts_random_runs.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
+@save "mcts_random_runs1000.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
 println("DONE")
