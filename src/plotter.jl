@@ -65,12 +65,12 @@ for (i, koe) in enumerate(koe)
     state_phi[i] = atand(rv_ecef[3], sqrt(rv_ecef[1]^2 + rv_ecef[2]^2))
 end
 
-fontsize_theme = Theme(fontsize = 20)
+fontsize_theme = Theme(fontsize = 25)
 set_theme!(fontsize_theme)
 layout = @layout [a b]
 f = Figure(size = (1000, 800), layout=layout)
 lon,lat,data = GeoDatasets.landseamask(;resolution='c',grid=5)
-ax1 = Axis(f[1, 1], aspect=DataAspect(), title = "Heuristic")
+ax1 = Axis(f[1, 1], aspect=DataAspect(), title = "Greedy Baseline")
 sca1 =GLMakie.scatter!(ax1, target_lambda, target_phi, overdraw = true, color = :grey, markersize = MARKER_SIZE_FACTOR*target_mean_reward)
 sca2 =GLMakie.scatter!(ax1, observed_target_lambda , observed_target_phi, overdraw = true, color = :blue, markersize = MARKER_SIZE_FACTOR*observed_target_reward)
 GLMakie.contour!(ax1, lon, lat, data, levels=[0.5], color=:black, linewidth=0.5)
@@ -106,6 +106,7 @@ l4 = lines!(ax1, [p_bl[1], p_tl[1]], [p_bl[2], p_tl[2]], overdraw=true, color=:o
 
 
 lon,lat,data = GeoDatasets.landseamask(;resolution='c',grid=5)
+# CHANGE THE TITLE BELOW to "MCTS with One-step lookahead" if we're plotting that instead
 ax2 = Axis(f[1, 2], aspect=DataAspect(), title = "MCTS with Random Rollouts")
 GLMakie.scatter!(ax2, target_lambda, target_phi, overdraw = true, color = :grey, markersize = MARKER_SIZE_FACTOR*target_mean_reward)
 GLMakie.scatter!(ax2, mcts_observed_target_lambda , mcts_observed_target_phi, overdraw = true, color = :blue, markersize = MARKER_SIZE_FACTOR*mcts_observed_target_reward)
