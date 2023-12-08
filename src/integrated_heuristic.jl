@@ -10,7 +10,7 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "obs_site_Earth_1000.csv"
+dataset = "obs_site_Earth_100.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
 num_runs = 1
 
@@ -134,6 +134,6 @@ cross_ang_des = [t[1] for t in angs_list];
 along_ang_des = [t[2] for t in angs_list];
 
 println("Saving variables to heuristic_runs.jld2")
-@save "heuristic_runs.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
+@save "heuristic_runs_100.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
 
 println("DONE")

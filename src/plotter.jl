@@ -14,8 +14,8 @@ mu_E = 3.986004418e5; #km^3/m^2
 slew_limit = 15
 
 println("Loading in data")
-@load "../heuristic_runs1000.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
-@load "../mcts_heuristic_runs1000.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
+@load "heuristic_runs_50.jld2" state_list action_list cross_ang_des along_ang_des observed_target_lambda observed_target_phi observed_target_reward num_observed reward_totals target_lambda target_phi target_mean_reward
+@load "mcts_random_runs_50.jld2" state_list_mcts action_list_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
 
 println("Doing some last minute angle calcs")
 # Get some angles stuff
@@ -36,19 +36,19 @@ for i in 1:length(state_list_mcts)
 end
 
 println("Plotting")
-Plots.plot(index, action_list, label="Heuristic")
-Plots.plot!(index, action_list_mcts, title="Actions with MCTS", label="MCTS", show=true)
-savefig("action_plot.png")
+# Plots.plot(index, action_list, label="Heuristic")
+# Plots.plot!(index, action_list_mcts, title="Actions with MCTS", label="MCTS", show=true)
+# savefig("action_plot.png")
 
-random_along = Plots.plot(index, [y_angle_list, along_ang_des], label=["Actual Angle" "Desired Angle"], title="Along track angle for Baseline")
-mcts_along = Plots.plot(index, [y_angle_list_mcts, along_ang_des_mcts], label=["Actual Angle" "Desired Angle"], title="Along track angle for MCTS")
-Plots.plot(random_along, mcts_along,layout=(1, 2), size=(1000, 400), ylabel="Degrees", xlabel="Time (s)", show=true)
-savefig("along_angles_plot.png")
+# random_along = Plots.plot(index, [y_angle_list, along_ang_des], label=["Actual Angle" "Desired Angle"], title="Along track angle for Baseline")
+# mcts_along = Plots.plot(index, [y_angle_list_mcts, along_ang_des_mcts], label=["Actual Angle" "Desired Angle"], title="Along track angle for MCTS")
+# Plots.plot(random_along, mcts_along,layout=(1, 2), size=(1000, 400), ylabel="Degrees", xlabel="Time (s)", show=true)
+# savefig("along_angles_plot.png")
 
-random_cross = Plots.plot(index, [x_angle_list, cross_ang_des], label=["State Heuristic" "Desired Heuristic"])
-mcts_cross = Plots.plot(index, [x_angle_list_mcts, cross_ang_des_mcts], label=["State MCTS" "Desired MCTS"])
-Plots.plot(random_cross, mcts_cross,layout=(1, 2), title="Cross track angle", size=(800, 400), show=true)
-savefig("cross_angles_plot.png")
+# random_cross = Plots.plot(index, [x_angle_list, cross_ang_des], label=["State Heuristic" "Desired Heuristic"])
+# mcts_cross = Plots.plot(index, [x_angle_list_mcts, cross_ang_des_mcts], label=["State MCTS" "Desired MCTS"])
+# Plots.plot(random_cross, mcts_cross,layout=(1, 2), title="Cross track angle", size=(800, 400), show=true)
+# savefig("cross_angles_plot.png")
 
 
 # ######### GLOBE PLOTTER #########
@@ -121,5 +121,5 @@ l3 = lines!(ax2, [p_br[1], p_tr[1]], [p_br[2], p_tr[2]], overdraw=true, color=:o
 l4 = lines!(ax2, [p_bl[1], p_tl[1]], [p_bl[2], p_tl[2]], overdraw=true, color=:orange, linestyle=:solid, linewidth=2,)
 
 legend = Legend(f[1,3], [sca1, sca2, path, l1], ["Unobserved targets", "Observed targets", "Satellite Path", "Target Bounding Box"], framevisible=true)
-GLMakie.save("./comparison_1000.png", f)
+GLMakie.save("./comparison_50.png", f)
 

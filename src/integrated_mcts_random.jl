@@ -9,7 +9,7 @@ include("state.jl")
 
 println("Setting up problem")
 # SET THE DATASET YOU WANT TO TEST
-dataset = "./src/obs_site_Earth_1000.csv"
+dataset = "obs_site_Earth_100.csv"
 # SET THE NUMBER OF TIMES YOU WANT TO RUN THIS
 num_runs = 1
 
@@ -23,9 +23,9 @@ slew_limit = 15
 
 # MCTS parameters
 gamma = 0.95 # discount factor for the MDP problem
-m = 500 # simulation count
+m = 600 # simulation count
 c = 4000 # exploration constant
-d = 30 # simulation depth
+d = 50 # simulation depth
 d_r = 15 # rollout depth
 time_step = 30
 
@@ -225,5 +225,5 @@ cross_ang_des_mcts = [t[1] for t in angs_list_mcts]
 along_ang_des_mcts = [t[2] for t in angs_list_mcts];
 
 println("Saving variables to mcts_random_runs.jld2")
-@save "mcts_random_runs1000.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
+@save "mcts_random_runs_100.jld2" state_list_mcts action_list_mcts cross_ang_des_mcts along_ang_des_mcts mcts_observed_target_lambda mcts_observed_target_phi mcts_observed_target_reward mcts_num_observed mcts_reward_totals target_lambda target_phi target_mean_reward
 println("DONE")
