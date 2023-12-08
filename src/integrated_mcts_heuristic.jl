@@ -27,7 +27,7 @@ slew_limit = 15
 gamma = 0.95 # discount factor for the MDP problem
 m = 500 # simulation count
 c = 4000 # exploration constant
-d = 30 # simulation depth
+d = 40 # simulation depth
 d_r = 1 # rollout depth
 time_step = 30
 
